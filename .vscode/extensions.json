@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
   "recommendations": [
     "graphql.vscode-graphql",
     "shopify.polaris-for-vscode",
   ]
+=======
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
+  "recommendations": ["angular.ng-template"]
+>>>>>>> 22e2c00065b67e535edcc3392de890c61e383247
 }

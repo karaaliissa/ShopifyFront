@@ -1,0 +1,181 @@
+<div class="container mt-4">
+  <!-- <h2 class="mb-2">🛒 Orders Overview <small class="text-muted">({{ totalOrderCount }} total)</small></h2> -->
+
+  <h2 class="mb-4">
+    🛒 Orders Overview <small class="text-muted">({{ totalOrderCount }} total)</small>
+  </h2>
+  
+  <div class="mb-3 d-flex flex-wrap gap-2">
+    <ng-container *ngFor="let entry of tagStats | keyvalue">
+      <span class="badge fs-6"
+            [ngClass]="{
+              'bg-danger': entry.key === 'Pending',
+              'bg-primary': entry.key === 'Processing',
+              'bg-success': entry.key === 'Completed',
+              'bg-dark': entry.key === 'Canceled',
+              'bg-secondary': entry.key !== 'Pending' && entry.key !== 'Processing' && entry.key !== 'Completed' && entry.key !== 'Canceled'
+            }">
+        {{ entry.key && entry.key.trim() !== '' ? entry.key : 'Pending' }}: {{ entry.value }}
+      </span>
+    </ng-container>
+  </div>
+  
+
+  <div class="mb-3 text-end">
+    <button class="btn btn-outline-dark" (click)="toggleHistory()">
+      {{ showHistoryOnly ? '⬅ Back to Active Orders' : '📜 Show History Orders' }}
+    </button>
+  </div>
+  <div class="table-responsive">
+    <table class="table align-middle table-bordered rounded shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Order Info</th>
+          <th scope="col">Tags</th>
+          <th scope="col">Products</th>
+          <th scope="col">Shipping Info</th>
+          <th scope="col">Method</th>
+          <th scope="col">Total</th>
+          <th scope="col">Notes</th>
+          <th scope="col">Code Used</th>
+          <th scope="col">Device / Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- <tr *ngFor="let order of orders; let i = index"> -->
+          <tr *ngFor="let order of filteredOrders; let i = index">
+          <td>{{ i + 1 }}</td>
+
+          <!-- Order Info -->
+          <td>
+            <!-- Updated Badge Section (no "Open" badge anymore) -->
+            <div>
+              <strong>{{ order.name || order.id }}</strong><br />
+              <strong><b>{{ order.shipping_address?.name }}<br /></b></strong>
+              <small class="text-muted">{{ order.created_at | date: 'medium' }}</small>
+
+              <div class="mt-2">
+                <!-- Payment Status -->
+                <ng-container [ngSwitch]="order.financial_status">
+                  <span *ngSwitchCase="'pending'" class="badge bg-warning text-dark me-1">Pending</span>
+                  <span *ngSwitchCase="'paid'" class="badge bg-success me-1">Paid</span>
+                  <span *ngSwitchDefault class="badge bg-light text-dark me-1">{{ order.financial_status }}</span>
+                </ng-container>
+
+                <!-- Fulfillment Status -->
+                <ng-container *ngIf="!order.fulfillment_status || order.fulfillment_status === 'unfulfilled'">
+                  <span class="badge bg-secondary">Unfulfilled</span>
+                </ng-container>
+              </div>
+
+            </div>
+
+
+          </td>
+
+
+          <td>
+            <select class="form-select form-select-sm" [(ngModel)]="order.selectedTag" (change)="onTagChange(order)"
+              style="width: 130px">
+              <option *ngFor="let tag of tagOptions" [value]="tag">{{ tag }}</option>
+            </select>
+          </td>
+          <!-- Products Summary -->
+          <td>
+            <div *ngIf="order.line_items?.length">
+              <div *ngFor="let item of order.line_items.slice(0, 2)">
+                {{ item.name }} <small class="text-muted">x{{ item.quantity }}</small><br />
+              </div>
+              <div *ngIf="order.line_items.length > 2">
+                <em>+{{ order.line_items.length - 2 }} more</em>
+              </div>
+            </div>
+          </td>
+
+          <!-- Shipping Address -->
+          <td>
+            <strong [ngClass]="{
+              'text-danger fw-bold': order.shipping_address?.country !== 'Lebanon',
+              'text-dark': order.shipping_address?.country === 'Lebanon'
+            }">
+              {{ order.shipping_address?.country || 'Unknown' }}
+            </strong><br />
+            
+            <small>
+
+              {{ order.shipping_address?.address1 }}<br />
+              <!-- {{ order.shipping_address?.city }}<br /> -->
+              <!-- {{ order.shipping_address?.phone }} -->
+            </small>
+          </td>
+
+          <!-- Shipping Method -->
+          <td>
+            <strong>Shipping:</strong>
+            <span [ngClass]="{'text-danger': order.shipping_lines?.[0]?.title?.toLowerCase().includes('express')}">
+              {{ order.shipping_lines?.[0]?.title || 'N/A' }}
+            </span><br />
+
+            <strong>Payment:</strong>
+            {{
+            order.payment_gateway_names?.length
+            ? order.payment_gateway_names.join(', ')
+            : 'N/A'
+            }}
+          </td>
+
+
+          <!-- Tags -->
+
+          <td>
+            <strong>{{ order.total_price | currency:'USD' }}</strong>
+          </td>
+
+          <td>
+            <div class="mt-2" *ngIf="order.note">
+              <small class="text-danger"> {{ order.note }}</small>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="order.discount_codes?.length; else noCode">
+              <span *ngFor="let code of order.discount_codes">
+                <span class="badge bg-info text-dark me-1">{{ code.code }}</span>
+              </span>
+            </div>
+            <ng-template #noCode>
+              <span class="text-muted">—</span>
+            </ng-template>
+          </td>
+          <td>
+            <div>
+              <!-- Device Icon -->
+              <!-- <i class="fas fa-mobile-alt me-1" *ngIf="order.device === 'Mobile'"></i>
+              <i class="fas fa-desktop me-1" *ngIf="order.device === 'Desktop'"></i>
+              {{ order.device || 'Unknown' }}<br /> -->
+
+              <!-- Channel (source_name from Shopify) -->
+              <small [ngClass]="{
+                'text-primary': order.channel === 'web',
+                'text-muted': order.channel !== 'web'
+              }">
+                <i class="fas fa-store me-1"></i>
+                {{
+                order.channel === 'web' ? 'Online Store' :
+                order.channel === 'shopify_draft_order' ? 'Admin Store' :
+                order.channel || 'Unknown'
+                }}
+              </small>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center mt-4" *ngIf="nextPageInfo">
+    <button class="btn btn-outline-primary px-4 py-2" (click)="loadOrders()" [disabled]="loading">
+      {{ loading ? 'Loading...' : 'Load More Orders' }}
+    </button>
+  </div>
+</div>
