@@ -40,15 +40,10 @@ export class ShopifyService {
   }
 
   // (Optional) if still needed for comparison/stats
-  private token = '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'; // remove or secure before production
+  
   private shopifyBaseUrl = 'https://cropndtop.myshopify.com/admin/api/2024-01';
 
   getUnpaidOrderCount() {
-    const headers = new HttpHeaders({
-      'X-Shopify-Access-Token': this.token,
-      'Content-Type': 'application/json'
-    });
-
-    return this.http.get(`${this.shopifyBaseUrl}/orders/count.json?status=any&financial_status=pending`, { headers });
+    return this.http.get<{ count: number }>(`${this.apiUrl}/unpaid-order-count`);
   }
 }
