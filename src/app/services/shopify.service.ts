@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class ShopifyService {
   private apiUrl = 'https://shopify-proxy-wlo0.onrender.com/api';
-  private authToken = 'your-very-strong-secret-token'; // 👈 Match with proxy .env
+  private authToken = 'd172de1719f2ae3a0a1964e7b65fe505'; // 👈 Match with proxy .env
 
   constructor(private http: HttpClient) { }
 
@@ -19,7 +19,6 @@ export class ShopifyService {
     });
   }
   
-
   getOrders(pageInfo?: string) {
     const url = pageInfo
       ? `${this.apiUrl}/orders?page_info=${pageInfo}`

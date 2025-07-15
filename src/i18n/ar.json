@@ -1,0 +1,20 @@
+{
+    "HELLO": "مرحبا",
+    "WELCOME": "أهلا بك",
+    "ORDERS": "الطلبات",
+    "DASHBOARD": "الرئيسية",
+    "PACKING_LIST": "قائمة التعبئة",
+    "LOGIN": "تسجيل الدخول",
+    "LOGOUT": "تسجيل الخروج",
+    "LANGUAGE": "اللغة",
+    "COLOR_Red": "أحمر",
+    "COLOR_Blue": "أزرق",
+    "COLOR_Green": "أخضر",
+    "COLOR_Yellow": "أصفر",
+    "COLOR_Orange": "برتقالي",
+    "COLOR_Purple": "أرجواني",
+    "COLOR_Pink": "وردي",
+    "COLOR_Brown": "بني",
+    "COLOR_Gray": "رمادي",
+    "COLOR_Black": "أسود"
+}

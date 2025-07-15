@@ -1,0 +1,20 @@
+{
+    "HELLO": "Hello",
+    "WELCOME": "Welcome",
+    "ORDERS": "Orders",
+    "DASHBOARD": "Dashboard",
+    "PACKING_LIST": "Packing List",
+    "LOGIN": "Login",
+    "LOGOUT": "Logout",
+    "LANGUAGE": "Language",
+    "COLOR_Red": "Red",
+    "COLOR_Blue": "Blue",
+    "COLOR_Green": "Green",
+    "COLOR_Yellow": "Yellow",
+    "COLOR_Orange": "Orange",
+    "COLOR_Purple": "Purple",
+    "COLOR_Pink": "Pink",
+    "COLOR_Brown": "Brown",
+    "COLOR_Gray": "Gray",
+    "COLOR_Black": "Black"
+}

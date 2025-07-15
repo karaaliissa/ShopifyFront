@@ -1,10 +1,16 @@
 <div class="container mt-4">
-  <a [href]="'https://shopify-proxy-wlo0.onrender.com/auth?shop=cropndtop.myshopify.com'" class="btn btn-primary">
+  <!-- <a [href]="'https://shopify-proxy-wlo0.onrender.com/auth?shop=cropndtop.myshopify.com'" class="btn btn-primary">
     Install Shopify App
-  </a>
+  </a> -->
   
   <!-- <h2 class="mb-2">🛒 Orders Overview <small class="text-muted">({{ totalOrderCount }} total)</small></h2> -->
-
+  <div class="text-end mb-3">
+    <button class="btn btn-outline-dark" (click)="openPackingList()" [disabled]="selectedOrderIds.length === 0">
+      🧾 Picking List
+    </button>
+    
+  </div>
+  
   <h2 class="mb-4">
     🛒 Orders Overview <small class="text-muted">({{ totalOrderCount }} total)</small>
   </h2>
@@ -35,6 +41,15 @@
       <thead class="table-light">
         <tr>
           <th scope="col">#</th>
+          <th>
+            <!-- Select All -->
+            <input #selectAllBox
+       type="checkbox"
+       [checked]="allSelected"
+       (change)="toggleAllSelection(selectAllBox.checked)" />
+
+          </th>
+          
           <th scope="col">Order Info</th>
           <th scope="col">Tags</th>
           <th scope="col">Products</th>
@@ -50,7 +65,16 @@
         <!-- <tr *ngFor="let order of orders; let i = index"> -->
           <tr *ngFor="let order of filteredOrders; let i = index">
           <td>{{ i + 1 }}</td>
+          <td>
+            <input
+            type="checkbox"
+            [checked]="isOrderSelected(order)"
+            (change)="onCheckboxChange($event, order)"
+          />
+          
 
+          </td>
+          
           <!-- Order Info -->
           <td>
             <!-- Updated Badge Section (no "Open" badge anymore) -->
@@ -89,7 +113,12 @@
           <td>
             <div *ngIf="order.line_items?.length">
               <div *ngFor="let item of order.line_items.slice(0, 2)">
-                {{ item.name }} <small class="text-muted">x{{ item.quantity }}</small><br />
+                {{ item.name }} - 
+                <!-- <span *ngIf="item.variant_title">{{ item.variant_title.split(' / ')[0] }}</span> -->
+                <span *ngIf="item.variant_title" style="color: blue">
+                  {{ getTranslatedVariant(item.variant_title) }}
+                </span>
+                <small class="text-muted">x{{ item.quantity }}</small><br />
               </div>
               <div *ngIf="order.line_items.length > 2">
                 <em>+{{ order.line_items.length - 2 }} more</em>
